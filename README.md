@@ -1,4 +1,4 @@
-# FakeSMTP
+# php-smtp-server
 
 php-smtp-server is a PHP script written to act like any traditional postfix SMTP server. Used in conjunction with xinetd, the script is called when a mail client connects to port 25 on the server.
 
@@ -30,14 +30,17 @@ service smtp
 5. make sure the 'emails' folder and mail.log have sufficient rights. chown -R user:user emails and chown user:user mail.log where user:user is the user you used in the xined.conf (see *2);
 6. Test your server with PHPMailer; from commandline go to your project directory and execute "php test.php". Fix errors if you see any, if not: check the "emails" folder and check the file(s) in there! 
 	
+## Change port
+
+There is no port configuration in this script, but yes its possible:
+1. login as root;
+2. vi /etc/services and find the line with 'smtp'
+3. add a line below, and if you want port 2525 add: smtp-alt        2525/tcp 
+4. goto step 3 in the installation section and add the config again, but now with header 'service smtp-alt'
+5. service restart xinetd
 
 ## Usage
 
 ```php
-#!/usr/bin/php
-<?php
-require('smtp.class.inc.php');
-
-$hp = new fakeSMTP;
 $hp->serverHello = 'Some Server identity (optional)';
 ```
