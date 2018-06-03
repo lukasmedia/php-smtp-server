@@ -1,0 +1,3 @@
+[submodule "phpmailer.min"]
+	path = phpmailer.min
+	url = git@github.com:lukasmedia/phpmailer.min.git
