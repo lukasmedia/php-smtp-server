@@ -4,7 +4,7 @@
  * The comunication is based upon the SMPT standards defined in http://www.lesnikowski.com/mail/Rfc/rfc2821.txt
  */
 
-class fakeSMTP
+class PHPSMTPServer
 {
 	public $logFile 		  = false;
 	public $serverHello 	= '';

@@ -1,3 +1,6 @@
 [submodule "phpmailer.min"]
 	path = phpmailer.min
 	url = git@github.com:lukasmedia/phpmailer.min.git
+[submodule "MailMimeParser"]
+	path = MailMimeParser
+	url = git@github.com:zbateson/MailMimeParser.git
