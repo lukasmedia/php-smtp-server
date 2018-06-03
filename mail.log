@@ -1,0 +1,36 @@
+REPLY:220 Mailroute.nl ESMTP Postfix
+EHLO Lenovo-Ronald-Ubuntu
+REPLY:250 HELO 127.0.0.1
+MAIL FROM:<from@example.com>
+REPLY:250 2.1.0 Ok
+RCPT TO:<whoto@example.com>
+REPLY:250 2.1.5 Ok
+DATA
+REPLY:354 Ok Send data ending with <CRLF>.<CRLF>
+REPLY:250 2.0.0 Ok: queued as BYKMLPJNG
+QUIT
+REPLY:221 2.0.0 Bye 127.0.0.1
+REPLY:220 Mailroute.nl ESMTP Postfix
+EHLO Lenovo-Ronald-Ubuntu
+REPLY:250 HELO 127.0.0.1
+MAIL FROM:<from@example.com>
+REPLY:250 2.1.0 Ok
+RCPT TO:<whoto@example.com>
+REPLY:250 2.1.5 Ok
+DATA
+REPLY:354 Ok Send data ending with <CRLF>.<CRLF>
+REPLY:250 2.0.0 Ok: queued as 67T4M2NQC
+QUIT
+REPLY:221 2.0.0 Bye 127.0.0.1
+REPLY:220 Mailroute.nl ESMTP Postfix
+EHLO Lenovo-Ronald-Ubuntu
+REPLY:250 HELO 127.0.0.1
+MAIL FROM:<from@example.com>
+REPLY:250 2.1.0 Ok
+RCPT TO:<whoto@example.com>
+REPLY:250 2.1.5 Ok
+DATA
+REPLY:354 Ok Send data ending with <CRLF>.<CRLF>
+REPLY:250 2.0.0 Ok: queued as 3B4XC27J8T
+QUIT
+REPLY:221 2.0.0 Bye 127.0.0.1
