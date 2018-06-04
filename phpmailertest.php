@@ -1,8 +1,8 @@
 <?php
 date_default_timezone_set('Etc/UTC');
 
-require 'phpmailer.min/class.phpmailer.php';
-require 'phpmailer.min/SMTP.php';
+require 'src/phpmailer.min/class.phpmailer.php';
+require 'src/phpmailer.min/SMTP.php';
 
 $mail = new PHPMailer;
 $mail->isSMTP();
@@ -22,9 +22,9 @@ $mail->addReplyTo('replyto@example.com', 'First Last');
 $mail->addAddress('whoto@example.com', 'John Doe');
 $mail->Subject = 'PHPMailer SMTP test';
 
-$mail->msgHTML(file_get_contents('phpmailer.min/contents.html'), __DIR__);
+$mail->msgHTML(file_get_contents('src/phpmailer.min/contents.html'), __DIR__);
 $mail->AltBody = 'This is a plain-text message body';
-$mail->addAttachment('phpmailer.min/images/phpmailer_mini.png');
+$mail->addAttachment('src/phpmailer.min/images/phpmailer_mini.png');
 
 if (!$mail->send()) {
     echo 'Mailer Error: ' . $mail->ErrorInfo;
