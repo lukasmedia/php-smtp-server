@@ -1,6 +1,0 @@
-[submodule "src/phpmailer.min"]
-	path = src/phpmailer.min
-	url = https://github.com/lukasmedia/phpmailer.min.git
-[submodule "src/MailMimeParser"]
-	path = src/MailMimeParser
-	url = https://github.com/zbateson/MailMimeParser.git

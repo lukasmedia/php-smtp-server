@@ -1,0 +1,13 @@
+{
+    "name": "lukasmedia/php-smtp-server",
+    "description": "Simple PHP script which handles incoming e-mail used with zbateson/MailMimeParser and xinetd",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lukasmedia",
+            "email": "php@lukasmedia.nl"
+        }
+    ],
+    "require": {}
+}

@@ -6,27 +6,72 @@
 
 class PHPSMTPServer
 {
-	public $logFile 		  = false;
-	public $serverHello 	= '';
-	public $mailFile 		  = false;
+	private $logFile 		  = 'mail.log';
+	private $serverHello 	= 'Mailroute.nl ESMTP Postfix';
+	private $mailFile     = '';
   private $ip           = '';
+  private $ips          = ['127.0.0.1'];
+  private $serverHalt   = false;
+  private $random       = '';
 
-	public function __construct()
+	public function __construct($fullpath)
 	{
-    $this->ip = $this->detectIP();
+    $this->random   = strtoupper(uniqid());
+    $this->logFile  = $fullpath . '/' . $this->logFile;
+    $this->mailFile = $fullpath . '/emails/'.$this->random.'.mime';
+    $this->checkWriteables();
+
+    $this->log('------------------> RECEIVING NEW MESSAGE');
+
+    $this->ip       = $this->detectIP();
+    $this->validateIP();
+
+    $this->receive();
 	}
+
+  private function checkWriteables()
+  {
+    @touch($this->mailFile);
+    if (!file_exists($this->mailFile))
+    {
+      $this->log('ERROR: CANNOT WRITE TO ['.$this->mailFile.']');
+      $this->reply('502 5.5.2 Error: server has problems'); 
+      $this->serverHalt = true;
+    }
+  }
+
+  private function validateIP()
+  {
+    // array is not filled with allowed ips:
+    if (!count($this->ips))
+      $this->log('WARNING: NO IP RESTRICTIONS SET!');
+    else // array is filled with allowed ips:
+    {
+      if (in_array($this->ip, $this->ips))
+        $this->log('INFO: ' . $this->ip . ' whitelisted');
+      else 
+      {
+        $this->serverHalt = true;
+        $this->reply('502 5.5.2 Error: IP not whitelisted'); 
+      } 
+    }
+  }
 
 	public function receive()
 	{
+    if ($this->serverHalt)
+    {
+      $this->reply('221 2.0.0 Bye '.$this->ip);
+      return;
+    }
+
 		$hasValidFrom 	  = false;
 		$hasValidTo 		  = false;
 		$receivingData 	  = false;
 
 		$this->reply('220 '.$this->serverHello);
-		
 
 		$raw = "";
-
 		while ($data = utf8_encode(fgets(STDIN))) 
 		{
 			$raw .= $data; // save to file
@@ -35,7 +80,6 @@ class PHPSMTPServer
 
 			if (!$receivingData)
 				 $this->log($data);
-            
 
 		   if (!$receivingData && preg_match('/^MAIL FROM:\s?<(.*)>/i', $data, $match))
 			{
@@ -108,7 +152,7 @@ class PHPSMTPServer
       {
         /* Email Received, now let's look at it */
         $receivingData = false;
-        $this->reply('250 2.0.0 Ok: queued as '.$this->generateRandom());
+        $this->reply('250 2.0.0 Ok: queued as '.$this->random);
 
         // use new package!
         set_time_limit(5); // Just run the exit to prevent open threads / abuse
@@ -118,14 +162,14 @@ class PHPSMTPServer
 		if ($this->mailFile)
 			file_put_contents($this->mailFile, $raw);
 
-    /* Say good bye */
     $this->reply('221 2.0.0 Bye '.$this->ip);
   }
 
-  public function log($s)
+  private function log($s)
   {
       if ($this->logFile) {
-          file_put_contents($this->logFile, trim($s)."\n", FILE_APPEND);
+          $s = date('Y-m-d H:i:s') . ' ' . $s;
+          @file_put_contents($this->logFile, trim($s)."\n", FILE_APPEND);
       }
   }
 
@@ -144,20 +188,6 @@ class PHPSMTPServer
   private function validateEmail($email)
   {
     return filter_var($email, FILTER_VALIDATE_EMAIL);
-  }
-
-  private function generateRandom($length=10)
-  {
-    $password = '';
-    $possible = '2346789BCDFGHJKLMNPQRTVWXYZ';
-    $maxlength = strlen($possible);
-    $i = 0;
-    for ($i=0; $i < $length; $i++) {
-      $char = substr($possible, mt_rand(0, $maxlength-1), 1);
-      if (!strstr($password, $char))          
-        $password .= $char;
-    }
-    return $password;
   }
 
 }
