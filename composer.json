@@ -1,7 +1,8 @@
 {
     "name": "lukasmedia/php-smtp-server",
     "description": "Simple PHP script which handles incoming e-mail used with zbateson/MailMimeParser and xinetd",
-    "type": "project",
+    "keywords": ["email", "mail", "mime", "parser", "php-imap"],
+    "homepage": "https://www.lukasmedia.nl/",
     "license": "MIT",
     "authors": [
         {
@@ -9,5 +10,11 @@
             "email": "php@lukasmedia.nl"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=5.4",
+        "ext-mbstring": "*",
+        "zbateson/mail-mime-parser": "^0.4.9",
+        "monolog/monolog": "^1.23",
+        "lukasmedia/phpmailer.min": "^1.3"
+    }
 }

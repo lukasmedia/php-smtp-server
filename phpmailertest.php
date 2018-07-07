@@ -1,10 +1,9 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
+
 date_default_timezone_set('Etc/UTC');
 
-require 'src/phpmailer.min/class.phpmailer.php';
-require 'src/phpmailer.min/SMTP.php';
-
-$mail = new PHPMailer;
+$mail = new \Lukasmedia\PHPMailer\PHPMailer();
 $mail->isSMTP();
 
 //Enable SMTP debugging
@@ -22,12 +21,11 @@ $mail->addReplyTo('replyto@example.com', 'First Last');
 $mail->addAddress('whoto@example.com', 'John Doe');
 $mail->Subject = 'PHPMailer SMTP test';
 
-$mail->msgHTML(file_get_contents('src/phpmailer.min/contents.html'), __DIR__);
+$mail->msgHTML(file_get_contents('vendor/lukasmedia/phpmailer.min/contents.html'), __DIR__);
 $mail->AltBody = 'This is a plain-text message body';
-$mail->addAttachment('src/phpmailer.min/images/phpmailer_mini.png');
+$mail->addAttachment('vendor/lukasmedia/phpmailer.min/images/phpmailer_mini.png');
 
-if (!$mail->send()) {
+if (!$mail->send())
     echo 'Mailer Error: ' . $mail->ErrorInfo;
-} else {
+else
     echo 'Message sent!';
-}

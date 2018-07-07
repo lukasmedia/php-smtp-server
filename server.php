@@ -1,8 +1,17 @@
 #!/usr/bin/php
 <?php
+$fullpath = trim(dirname(__FILE__));
+
+require_once __DIR__ . '/vendor/autoload.php';
 require('src/smtp.class.inc.php');
 
-$fullpath = dirname(__FILE__);
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
-$hp = new PHPSMTPServer($fullpath);
+$log = new Logger('php-smtp-server');
+$log->pushHandler(new StreamHandler($fullpath.'/logs/mail.log', Logger::WARNING));
+
+$mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
+
+$hp = new PHPSMTPServer($fullpath, $log, $mailParser);
 exit;

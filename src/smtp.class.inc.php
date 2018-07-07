@@ -9,24 +9,28 @@ class PHPSMTPServer
 	private $logFile 		  = 'mail.log';
 	private $serverHello 	= 'Mailroute.nl ESMTP Postfix';
 	private $mailFile     = '';
-  private $ip           = '';
-  private $ips          = ['127.0.0.1'];
-  private $serverHalt   = false;
-  private $random       = '';
+    private $ip           = '';
+    private $ips          = ['127.0.0.1'];
+    private $serverHalt   = false;
+    private $random       = '';
+    private $logger;
+    private $mailParser;
 
-	public function __construct($fullpath)
+	public function __construct($fullpath, $logger, $mailParser)
 	{
-    $this->random   = strtoupper(uniqid());
-    $this->logFile  = $fullpath . '/' . $this->logFile;
-    $this->mailFile = $fullpath . '/emails/'.$this->random.'.mime';
-    $this->checkWriteables();
+	    $this->mailParser = $mailParser;
+	    $this->logger   = $logger;
+        $this->random   = strtoupper(uniqid());
+        $this->logFile  = $fullpath . '/logs/' . $this->logFile;
+        $this->mailFile = $fullpath . '/emails/'.$this->random.'.mime';
+        $this->checkWriteables();
 
-    $this->log('------------------> RECEIVING NEW MESSAGE');
+        $this->log('------------------> RECEIVING NEW MESSAGE');
 
-    $this->ip       = $this->detectIP();
-    $this->validateIP();
+        $this->ip       = $this->detectIP();
+        $this->validateIP();
 
-    $this->receive();
+        $this->receive();
 	}
 
   private function checkWriteables()
@@ -60,10 +64,10 @@ class PHPSMTPServer
 	public function receive()
 	{
     if ($this->serverHalt)
-    {
-      $this->reply('221 2.0.0 Bye '.$this->ip);
-      return;
-    }
+        {
+          $this->reply('221 2.0.0 Bye '.$this->ip);
+          return;
+        }
 
 		$hasValidFrom 	  = false;
 		$hasValidTo 		  = false;
@@ -159,16 +163,36 @@ class PHPSMTPServer
       } 
     }
 	
-		if ($this->mailFile)
-			file_put_contents($this->mailFile, $raw);
+		if ($this->mailFile) {
+
+		    if ($this->mailParser)
+            {
+                $json = [];
+                $message = $this->mailParser->parse($raw);
+                $json['from_email'] = $message->getHeaderValue('from');
+                $json['from']       = $message->getHeader('from')->getPersonName();
+                $json['to_email']   = $message->getHeaderValue('to');
+                $json['to']         = $message->getHeader('to')->getPersonName();
+                $json['subject']    = $message->getHeaderValue('subject');
+                $json['body_text']  = $message->getTextContent();
+                $json['body_html']  = $message->getHtmlContent();
+                $raw = json_encode($json);
+            }
+
+		    file_put_contents($this->mailFile, $raw);
+        }
 
     $this->reply('221 2.0.0 Bye '.$this->ip);
   }
 
   private function log($s)
   {
-      if ($this->logFile) {
-          $s = date('Y-m-d H:i:s') . ' ' . $s;
+      if (method_exists($this->logger, 'warning'))
+      {
+          $this->logger->warning($s);
+      }
+      else if ($this->logFile) {
+
           @file_put_contents($this->logFile, trim($s)."\n", FILE_APPEND);
       }
   }
